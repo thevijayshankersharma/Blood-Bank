@@ -17,7 +17,7 @@ const Home = () => {
     setLoading(true);
     setError(null);
     
-    api.hospitalList(router.query)
+    api.hospitalList(router.query) 
       .then(res => {
         setHospitals(res.data);
         setLoading(false);
