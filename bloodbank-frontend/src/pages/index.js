@@ -3,8 +3,6 @@ import { PageWrapper } from '@/components/Wrapper';
 import useApiHelper from '@/api';
 import { useRouter } from 'next/router';
 import { FaSearch, FaSort, FaHospital, FaMapMarkerAlt, FaPhone, FaBuilding, FaEnvelope } from 'react-icons/fa';
-// Using Bootstrap Icons for a more consistent look
-// import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const Home = () => {
   const [hospitals, setHospitals] = useState([]);
@@ -36,7 +34,6 @@ const Home = () => {
     
     if (name === 'search') {
       setSearchTerm(value);
-      // Debounce search to avoid too many requests
       const timeoutId = setTimeout(() => {
         router.push({
           pathname: router.pathname,
@@ -56,7 +53,7 @@ const Home = () => {
   return (
     <PageWrapper page="Home">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h4 className="fw-bold"><i className="bi bi-hospital me-2"></i>Hospital List</h4>
+        <h4 className="fw-bold"><FaHospital className="me-2" />Hospital List</h4>
       </div>
       
       <div className="card mb-4">
@@ -65,7 +62,7 @@ const Home = () => {
             <div className="col-md-6">
               <label htmlFor="search" className="form-label">Search Hospitals</label>
               <div className="input-group">
-                <span className="input-group-text"><i className="bi bi-search"></i></span>
+                <span className="input-group-text"><FaSearch /></span>
                 <input
                   id="search"
                   className='form-control'
@@ -80,7 +77,7 @@ const Home = () => {
             <div className="col-md-6">
               <label htmlFor="ordering" className="form-label">Sort By</label>
               <div className="input-group">
-                <span className="input-group-text"><i className="bi bi-sort-alpha-down"></i></span>
+                <span className="input-group-text"><FaSort /></span>
                 <select 
                   id="ordering"
                   onChange={handleFilter} 
@@ -117,23 +114,23 @@ const Home = () => {
           <table className="table">
             <thead>
               <tr>
-                <th><i className="bi bi-hospital me-2"></i>Name</th>
-                <th><i className="bi bi-telephone me-2"></i>Phone</th>
-                <th><i className="bi bi-envelope me-2"></i>Email</th>
-                <th><i className="bi bi-geo-alt me-2"></i>Address</th>
+                <th><FaHospital className="me-2" />Name</th>
+                <th><FaPhone className="me-2" />Phone</th>
+                <th><FaEnvelope className="me-2" />Email</th>
+                <th><FaMapMarkerAlt className="me-2" />Address</th>
               </tr>
             </thead>
             <tbody>
               {hospitals.map(hospital => (
                 <tr key={hospital?.id}>
-                  <td className="fw-medium" data-label="Name">{hospital?.name || 'N/A'}</td>
-                  <td data-label="Phone">{hospital?.phone_number1 || 'N/A'}</td>
-                  <td data-label="Email">
+                  <td className="fw-medium">{hospital?.name || 'N/A'}</td>
+                  <td>{hospital?.phone_number1 || 'N/A'}</td>
+                  <td>
                     <a href={`mailto:${hospital?.email}`} className="text-decoration-none">
                       {hospital?.email || 'N/A'}
                     </a>
                   </td>
-                  <td data-label="Address">{hospital?.address || 'N/A'}</td>
+                  <td>{hospital?.address || 'N/A'}</td>
                 </tr>
               ))}
             </tbody>
@@ -144,4 +141,4 @@ const Home = () => {
   );
 };
 
-export default Home
+export default Home;
