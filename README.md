@@ -57,12 +57,3 @@ npm run dev
 yarn run dev
 ```
 Your app will run on http://localhost:3000/
-
-<<<<<<< HEAD
-=======
-
-
-
-https://github.com/mominur774/blood-bank-management/assets/57674321/9f804743-8b40-47d2-aa32-d2805dabef24
-
->>>>>>> ced46f4e9ab06d13fdae70ebd68dd7295e660ce1
