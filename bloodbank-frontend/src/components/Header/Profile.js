@@ -1,6 +1,5 @@
-import Dropdown from 'react-bootstrap/Dropdown';
+import React, { useContext } from 'react';
 import GlobalContext from '@/context/GlobalContext';
-import { useContext } from 'react';
 import useApiHelper from '@/api';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
@@ -10,29 +9,30 @@ function Profile() {
   const api = useApiHelper();
   const router = useRouter();
 
-
   const handleLogout = () => {
     api.signOut().then(res => {
-      router.push('/sign-in')
+      router.push('/sign-in');
       gContext.setIsLoggedIn(false);
-      Cookies.remove('accessToken')
-    }).catch(error => {
-      gContext.setIsLoggedIn(false);
-      Cookies.remove('accessToken')
-    })
-  }
+      Cookies.remove('accessToken');
+    });
+  };
 
   return (
-    <Dropdown>
-      <Dropdown.Toggle variant="success" id="dropdown-basic">
-        {gContext?.user?.username}
-      </Dropdown.Toggle>
-
-      <Dropdown.Menu>
-        <Dropdown.Item href="/update-profile">Profile</Dropdown.Item>
-        <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
+    <div className="dropdown">
+      <button 
+        className="btn btn-secondary dropdown-toggle" 
+        type="button" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false"
+      >
+        <i className="bi bi-person-circle"></i>
+        <span className="ms-2">{gContext?.user?.username || 'User'}</span>
+      </button>
+      <ul className="dropdown-menu dropdown-menu-end">
+        <li><a className="dropdown-item" href="/update-profile"><i className="bi bi-person"></i> Profile</a></li>
+        <li><button className="dropdown-item" onClick={handleLogout}><i className="bi bi-box-arrow-right"></i> Logout</button></li>
+      </ul>
+    </div>
   );
 }
 
