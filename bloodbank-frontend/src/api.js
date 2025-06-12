@@ -13,7 +13,12 @@ const useApiHelper = () => {
 
     hospitalList: (params = {}) => axios.get(`api/v1/hospital/hospital-list/`, { params: params }),
     getBloodBank: (params = {}) => axios.get(`api/v1/hospital/blood-bank/`, { params: params }),
-    createDonor: (data, params = {}) => axios.post(`api/v1/hospital/donor/`, data, { params: params }),
+    createDonor: (data, params = {}) => axios.post(`api/v1/hospital/donor/`, data, { 
+      params: params,
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+      }
+    }),
     getDonor: (params = {}) => axios.get(`api/v1/hospital/donor/`, { params: params }),
     getRecipient: (params = {}) => axios.get(`api/v1/hospital/recipient/`, { params: params }),
     createRecipient: (data, params = {}) => axios.post(`api/v1/hospital/recipient/`, data, { params: params }),

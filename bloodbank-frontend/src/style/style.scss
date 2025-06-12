@@ -1,0 +1,148 @@
+@import 'theme';
+@import 'components';
+@import 'layout';
+
+// Global Styles
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: $font-primary;
+  color: map-get($colors, dark);
+  background-color: map-get($colors, light);
+  line-height: 1.6;
+}
+
+// Typography Enhancements
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-secondary;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: map-get($spacing, md);
+  color: map-get($colors, dark);
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+// Link Styles
+a {
+  color: map-get($colors, primary);
+  text-decoration: none;
+  transition: $transition-fast;
+  
+  &:hover {
+    color: map-get($colors, primary-dark);
+  }
+}
+
+// Blood Bank Specific Components
+.blood-type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: map-get($colors, primary);
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-right: map-get($spacing, sm);
+}
+
+.donation-status {
+  padding: map-get($spacing, xs) map-get($spacing, sm);
+  border-radius: map-get($border-radius, full);
+  font-size: 0.85rem;
+  font-weight: 500;
+  
+  &.available {
+    background: rgba(map-get($colors, success), 0.1);
+    color: map-get($colors, success);
+  }
+  
+  &.low {
+    background: rgba(map-get($colors, warning), 0.1);
+    color: map-get($colors, warning);
+  }
+  
+  &.critical {
+    background: rgba(map-get($colors, danger), 0.1);
+    color: map-get($colors, danger);
+  }
+}
+
+// Dashboard Cards
+.dashboard-card {
+  background: white;
+  border-radius: map-get($border-radius, lg);
+  padding: map-get($spacing, lg);
+  box-shadow: map-get($shadows, md);
+  height: 100%;
+  
+  &-header {
+    @include flex-between;
+    margin-bottom: map-get($spacing, lg);
+    
+    h3 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+    
+    .icon {
+      width: 40px;
+      height: 40px;
+      @include flex-center;
+      border-radius: map-get($border-radius, md);
+      background: rgba(map-get($colors, primary), 0.1);
+      color: map-get($colors, primary);
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+// Utility Classes
+.text-primary { color: map-get($colors, primary) !important; }
+.text-secondary { color: map-get($colors, secondary) !important; }
+.text-success { color: map-get($colors, success) !important; }
+.text-warning { color: map-get($colors, warning) !important; }
+.text-danger { color: map-get($colors, danger) !important; }
+
+.bg-primary { background-color: map-get($colors, primary) !important; }
+.bg-secondary { background-color: map-get($colors, secondary) !important; }
+.bg-success { background-color: map-get($colors, success) !important; }
+.bg-warning { background-color: map-get($colors, warning) !important; }
+.bg-danger { background-color: map-get($colors, danger) !important; }
+
+.font-weight-light { font-weight: 300 !important; }
+.font-weight-normal { font-weight: 400 !important; }
+.font-weight-medium { font-weight: 500 !important; }
+.font-weight-semibold { font-weight: 600 !important; }
+.font-weight-bold { font-weight: 700 !important; }
+
+// Responsive Utilities
+@each $breakpoint, $value in $breakpoints {
+  @include respond-to($breakpoint) {
+    .d-#{$breakpoint}-none { display: none !important; }
+    .d-#{$breakpoint}-block { display: block !important; }
+    .d-#{$breakpoint}-flex { display: flex !important; }
+    .d-#{$breakpoint}-grid { display: grid !important; }
+  }
+}

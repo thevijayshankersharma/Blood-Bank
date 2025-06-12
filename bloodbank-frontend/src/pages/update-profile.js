@@ -80,6 +80,26 @@ const UpdateProfile = () => {
                 ))}
               </select>
             </div>
+            
+            <div className="form-group mb-3">
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="is_donor"
+                  name="is_donor"
+                  checked={formData?.is_donor || false}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    is_donor: e.target.checked
+                  })}
+                />
+                <label className="form-check-label" htmlFor="is_donor">
+                  Register as a blood donor
+                </label>
+              </div>
+            </div>
+            
             <button
               className='btn btn-primary w-100 login-btn fw-bold py-2 mt-2 mb-3'
               type="submit"

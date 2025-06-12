@@ -8,7 +8,7 @@ class BaseModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 class User(AbstractUser):
-    blood_group = models.CharField(max_length=5, choices=enum_helper.BLOOD_GROUP.choices)
+    blood_group = models.CharField(max_length=3, blank=True, null=True)
     avatar = models.ImageField(upload_to='avatar', blank=True, null=True)
     is_donor = models.BooleanField(default=False)
     is_recipient = models.BooleanField(default=False)

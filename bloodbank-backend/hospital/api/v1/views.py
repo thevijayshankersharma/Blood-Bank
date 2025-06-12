@@ -30,7 +30,11 @@ class BloodBankListView(generics.ListAPIView):
     serializer_class = BloodBankSerializer
 
     def get_queryset(self):
-        return BloodBank.objects.filter(is_available=True).order_by('hospital')
+        # Only show blood banks with approved donations and available blood
+        return BloodBank.objects.filter(
+            is_available=True,
+            bag_quantity__gt=0  # Only show blood banks with quantity greater than 0
+        ).order_by('hospital')
 
 class RecipientListCreateView(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated, )

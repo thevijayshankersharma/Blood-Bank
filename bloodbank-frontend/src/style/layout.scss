@@ -1,0 +1,211 @@
+@import 'theme';
+
+// Container Layout
+.container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: map-get($spacing, lg);
+  padding-left: map-get($spacing, lg);
+  
+  @include respond-to(sm) {
+    max-width: 540px;
+  }
+  
+  @include respond-to(md) {
+    max-width: 720px;
+  }
+  
+  @include respond-to(lg) {
+    max-width: 960px;
+  }
+  
+  @include respond-to(xl) {
+    max-width: 1140px;
+  }
+}
+
+// Grid System Enhancement
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -#{map-get($spacing, md)};
+  margin-left: -#{map-get($spacing, md)};
+}
+
+.col {
+  flex: 1 0 0%;
+  padding-right: map-get($spacing, md);
+  padding-left: map-get($spacing, md);
+}
+
+// Dashboard Layout
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+  
+  @include respond-to(lg) {
+    grid-template-columns: 300px 1fr;
+  }
+  
+  @media (max-width: map-get($breakpoints, lg)) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Main Content Area
+.main-content {
+  padding: map-get($spacing, xl);
+  background: map-get($colors, light);
+  min-height: 100vh;
+  
+  @media (max-width: map-get($breakpoints, md)) {
+    padding: map-get($spacing, lg);
+  }
+}
+
+// Card Grid Layout
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: map-get($spacing, lg);
+  margin-bottom: map-get($spacing, xl);
+}
+
+// Stats Grid
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: map-get($spacing, md);
+  margin-bottom: map-get($spacing, xl);
+  
+  .stat-card {
+    background: white;
+    padding: map-get($spacing, lg);
+    border-radius: map-get($border-radius, lg);
+    box-shadow: map-get($shadows, md);
+    @include hover-lift;
+    
+    h3 {
+      font-size: 2rem;
+      margin-bottom: map-get($spacing, xs);
+      color: map-get($colors, primary);
+    }
+    
+    p {
+      color: map-get($colors, gray);
+      margin: 0;
+    }
+  }
+}
+
+// Form Layout
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: map-get($spacing, md);
+  margin-bottom: map-get($spacing, lg);
+}
+
+// Auth Pages Layout
+.auth-layout {
+  min-height: 100vh;
+  @include flex-center;
+  background: linear-gradient(135deg, rgba(map-get($colors, primary), 0.1) 0%, rgba(map-get($colors, secondary), 0.1) 100%);
+  
+  .auth-card {
+    width: 100%;
+    max-width: 400px;
+    padding: map-get($spacing, xl);
+    background: white;
+    border-radius: map-get($border-radius, lg);
+    box-shadow: map-get($shadows, xl);
+    
+    @media (max-width: map-get($breakpoints, sm)) {
+      margin: map-get($spacing, md);
+      padding: map-get($spacing, lg);
+    }
+  }
+}
+
+// Landing Page Layout
+.landing-layout {
+  .hero-section {
+    min-height: 80vh;
+    @include flex-center;
+    flex-direction: column;
+    text-align: center;
+    background: map-get($gradients, secondary);
+    color: white;
+    padding: map-get($spacing, xl) 0;
+    
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: map-get($spacing, lg);
+      
+      @media (max-width: map-get($breakpoints, md)) {
+        font-size: 2.5rem;
+      }
+    }
+  }
+  
+  .features-section {
+    padding: map-get($spacing, xl) 0;
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: map-get($spacing, xl);
+      
+      .feature-card {
+        text-align: center;
+        padding: map-get($spacing, lg);
+        
+        img {
+          width: 80px;
+          height: 80px;
+          margin-bottom: map-get($spacing, lg);
+        }
+      }
+    }
+  }
+}
+
+// Footer Layout
+.footer {
+  background: map-get($colors, dark);
+  color: white;
+  padding: map-get($spacing, xl) 0;
+  
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: map-get($spacing, xl);
+    
+    h4 {
+      color: white;
+      margin-bottom: map-get($spacing, lg);
+    }
+    
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      
+      li {
+        margin-bottom: map-get($spacing, sm);
+        
+        a {
+          color: rgba(white, 0.8);
+          text-decoration: none;
+          transition: $transition-fast;
+          
+          &:hover {
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}

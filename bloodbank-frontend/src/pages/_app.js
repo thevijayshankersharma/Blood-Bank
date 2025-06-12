@@ -3,6 +3,7 @@ import { Layout } from '@/components/Layout';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../style/style.css';
+import '../style/landing.css';
 import { GlobalProvider } from '@/context/GlobalContext';
 import Head from 'next/head';
 import Script from 'next/script';

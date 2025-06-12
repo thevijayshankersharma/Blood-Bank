@@ -1,0 +1,202 @@
+@import 'theme';
+
+// Enhanced Button Styles
+.btn {
+  padding: map-get($spacing, sm) map-get($spacing, lg);
+  border-radius: map-get($border-radius, md);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  @include hover-lift;
+  
+  &-primary {
+    background: map-get($gradients, primary);
+    border: none;
+    color: white;
+  }
+  
+  &-secondary {
+    background: map-get($gradients, secondary);
+    border: none;
+    color: white;
+  }
+
+  &-outline {
+    background: transparent;
+    border: 2px solid currentColor;
+    &:hover {
+      background: rgba(map-get($colors, primary), 0.1);
+    }
+  }
+}
+
+// Card Enhancements
+.card {
+  border-radius: map-get($border-radius, lg);
+  border: none;
+  box-shadow: map-get($shadows, md);
+  overflow: hidden;
+  transition: $transition-normal;
+  
+  &:hover {
+    box-shadow: map-get($shadows, lg);
+  }
+  
+  &-header {
+    background: none;
+    border-bottom: 1px solid rgba(map-get($colors, gray), 0.2);
+    padding: map-get($spacing, lg);
+    
+    h1, h2, h3, h4, h5, h6 {
+      margin: 0;
+      color: map-get($colors, dark);
+    }
+  }
+  
+  &-body {
+    padding: map-get($spacing, lg);
+  }
+}
+
+// Form Controls
+.form-control {
+  border-radius: map-get($border-radius, md);
+  border: 2px solid rgba(map-get($colors, gray), 0.2);
+  padding: map-get($spacing, sm) map-get($spacing, md);
+  transition: $transition-fast;
+  
+  &:focus {
+    border-color: map-get($colors, primary);
+    box-shadow: 0 0 0 3px rgba(map-get($colors, primary), 0.1);
+  }
+}
+
+// Table Styles
+.table {
+  width: 100%;
+  margin-bottom: map-get($spacing, xl);
+  
+  thead th {
+    background: rgba(map-get($colors, gray), 0.1);
+    border-bottom: 2px solid rgba(map-get($colors, gray), 0.2);
+    padding: map-get($spacing, md);
+    font-weight: 600;
+    color: map-get($colors, dark);
+  }
+  
+  tbody {
+    td {
+      padding: map-get($spacing, md);
+      border-bottom: 1px solid rgba(map-get($colors, gray), 0.1);
+      vertical-align: middle;
+    }
+    
+    tr:hover {
+      background: rgba(map-get($colors, gray), 0.05);
+    }
+  }
+}
+
+// Alert Component
+.alert {
+  border-radius: map-get($border-radius, md);
+  border: none;
+  padding: map-get($spacing, md) map-get($spacing, lg);
+  margin-bottom: map-get($spacing, lg);
+  @include glass-effect;
+  
+  &-success {
+    background: rgba(map-get($colors, success), 0.1);
+    color: darken(map-get($colors, success), 10%);
+  }
+  
+  &-warning {
+    background: rgba(map-get($colors, warning), 0.1);
+    color: darken(map-get($colors, warning), 10%);
+  }
+  
+  &-danger {
+    background: rgba(map-get($colors, danger), 0.1);
+    color: darken(map-get($colors, danger), 10%);
+  }
+}
+
+// Badge Component
+.badge {
+  padding: map-get($spacing, xs) map-get($spacing, sm);
+  border-radius: map-get($border-radius, sm);
+  font-weight: 500;
+  font-size: 0.85rem;
+  
+  &-primary {
+    background: rgba(map-get($colors, primary), 0.1);
+    color: map-get($colors, primary);
+  }
+  
+  &-success {
+    background: rgba(map-get($colors, success), 0.1);
+    color: map-get($colors, success);
+  }
+  
+  &-warning {
+    background: rgba(map-get($colors, warning), 0.1);
+    color: map-get($colors, warning);
+  }
+}
+
+// Navigation
+.nav-link {
+  color: map-get($colors, dark);
+  padding: map-get($spacing, sm) map-get($spacing, md);
+  border-radius: map-get($border-radius, md);
+  transition: $transition-fast;
+  
+  &:hover, &.active {
+    background: rgba(map-get($colors, primary), 0.1);
+    color: map-get($colors, primary);
+  }
+}
+
+// Sidebar Enhancement
+.sidebar {
+  background: map-get($gradients, secondary);
+  padding: map-get($spacing, lg);
+  
+  .nav-link {
+    color: rgba(white, 0.8);
+    margin-bottom: map-get($spacing, sm);
+    
+    &:hover, &.active {
+      background: rgba(white, 0.1);
+      color: white;
+    }
+  }
+}
+
+// Header Enhancement
+.header {
+  @include flex-between;
+  padding: map-get($spacing, md) map-get($spacing, lg);
+  background: white;
+  box-shadow: map-get($shadows, sm);
+  
+  .profile-section {
+    @include flex-center;
+    gap: map-get($spacing, md);
+  }
+}
+
+// Loading Spinner
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(map-get($colors, primary), 0.1);
+  border-radius: 50%;
+  border-top-color: map-get($colors, primary);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -15,6 +15,9 @@ const Sidebar = ({ page }) => {
         <li className={`nav-link ${page == 'Home' && 'active'}`}>
           <Link className='nav-item' href='/'><i className="bi bi-house-door me-2"></i>Home</Link>
         </li>
+        <li className={`nav-link ${page == 'Hospitals' && 'active'}`}>
+          <Link className='nav-item' href='/hospitals'><i className="bi bi-hospital me-2"></i>Hospitals</Link>
+        </li>
         <li className={`nav-link ${page == 'Blood Bank' && 'active'}`}>
           <Link className='nav-item' href={`${gContext?.isLoggedIn ? '/blood-bank' : '/sign-in'}`}><i className="bi bi-bank me-2"></i>Blood Bank</Link>
         </li>

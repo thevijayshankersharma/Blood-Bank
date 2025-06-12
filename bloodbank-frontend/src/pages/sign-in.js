@@ -40,7 +40,10 @@ const SignIn = () => {
       setErrors({});
       Cookies.set('accessToken', res.data.access);
       gContext.setIsLoggedIn(true);
-      router.push('/');
+      
+      // Redirect to the 'next' URL if it exists, otherwise to home
+      const nextUrl = router.query.next || '/';
+      router.push(nextUrl);
     }).catch(error => {
       setErrors(error?.response?.data || { non_field_errors: 'An error occurred. Please try again.' });
       setLoading(false);

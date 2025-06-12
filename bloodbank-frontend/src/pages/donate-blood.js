@@ -3,9 +3,14 @@ import { PageWrapper } from '@/components/Wrapper';
 import useApiHelper from '@/api';
 import { useRouter } from 'next/router';
 import GlobalContext from '@/context/GlobalContext';
-import { FaHospital, FaTint, FaInfoCircle, FaSearch, FaHeartbeat } from 'react-icons/fa';
+import { FaHospital, FaTint, FaInfoCircle, FaSearch, FaHeartbeat, FaSignInAlt } from 'react-icons/fa';
+import Cookies from 'js-cookie';
+import Link from 'next/link';
 
 const DonateBlood = () => {
+  // All hooks must be called at the top level, before any conditional returns
+  const router = useRouter();
+  const gContext = useContext(GlobalContext);
   const [hospital, setHospital] = useState();
   const [hospitalList, setHospitalList] = useState([]);
   const [filteredHospitals, setFilteredHospitals] = useState([]);
@@ -13,42 +18,49 @@ const DonateBlood = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const [isClient, setIsClient] = useState(false);
   const api = useApiHelper();
-  const router = useRouter();
-  const gContext = useContext(GlobalContext);
-
-  const donateBlood = (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError("");
-    
-    api.createDonor(hospital)
-      .then(res => {
-        router.push('/blood-bank');
-      })
-      .catch(error => {
-        setError(error.response?.data?.[0] || 'An error occurred while processing your donation');
-        setSubmitting(false);
-      });
-  };
-
+  
+  // Set isClient to true after component mounts (client-side only)
   useEffect(() => {
-    setLoading(true);
-    api.hospitalList()
-      .then(res => {
-        setHospitalList(res.data);
-        setFilteredHospitals(res.data);
-        setLoading(false);
-      })
-      .catch(error => {
+    setIsClient(true);
+  }, []);
+  
+  // Redirect to sign-in if not logged in
+  useEffect(() => {
+    if (isClient) { // Only run on client-side
+      const token = Cookies.get('accessToken');
+      if (!token) {
+        router.push('/sign-in?next=' + encodeURIComponent(router.asPath));
+      }
+    }
+  }, [router, isClient]);
+  
+  // Fetch hospital list
+  useEffect(() => {
+    if (!isClient || !gContext.isLoggedIn) return;
+    
+    const fetchHospitals = async () => {
+      try {
+        setLoading(true);
+        const response = await api.hospitalList();
+        setHospitalList(response.data);
+        setFilteredHospitals(response.data);
+      } catch (error) {
         console.error('Error fetching hospital list:', error);
         setError('Failed to load hospitals. Please try again.');
+      } finally {
         setLoading(false);
-      });
-  }, []);
-
+      }
+    };
+    
+    fetchHospitals();
+  }, [isClient, gContext.isLoggedIn]);
+  
+  // Filter hospitals based on search term
   useEffect(() => {
+    if (!isClient) return;
+    
     if (searchTerm.trim() === '') {
       setFilteredHospitals(hospitalList);
     } else {
@@ -58,7 +70,126 @@ const DonateBlood = () => {
       );
       setFilteredHospitals(filtered);
     }
-  }, [searchTerm, hospitalList]);
+  }, [searchTerm, hospitalList, isClient]);
+  
+  // Show loading state on initial render
+  if (!isClient) {
+    return (
+      <PageWrapper page="Loading...">
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </PageWrapper>
+    );
+  }
+  
+  // Redirect to sign-in if not logged in
+  if (!gContext.isLoggedIn) {
+    return (
+      <PageWrapper page="Sign In Required">
+        <div className="container py-5">
+          <div className="row justify-content-center">
+            <div className="col-md-8 col-lg-6">
+              <div className="card shadow-sm">
+                <div className="card-body text-center p-5">
+                  <div className="mb-4">
+                    <FaSignInAlt size={48} className="text-danger mb-3" />
+                    <h2>Authentication Required</h2>
+                    <p className="text-muted">Please sign in to continue with your blood donation.</p>
+                  </div>
+                  <Link href={`/sign-in?next=${encodeURIComponent(router.asPath)}`} className="btn btn-danger btn-lg">
+                    Sign In to Continue
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </PageWrapper>
+    );
+  }
+  // State and API hook are now at the top of the component
+
+  const donateBlood = (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError("");
+    
+    // Check if user is authenticated
+    const token = Cookies.get('accessToken');
+    if (!token) {
+      setError('Your session has expired. Please sign in again.');
+      setSubmitting(false);
+      router.push(`/sign-in?next=${encodeURIComponent(router.asPath)}`);
+      return;
+    }
+    
+    // Check if hospital is selected
+    if (!hospital) {
+      setError('Please select a hospital');
+      setSubmitting(false);
+      return;
+    }
+    
+    // Create donation request
+    const donationData = {
+      hospital: hospital?.hospital, // Use the selected hospital ID
+      status: 'pending',
+      user: gContext.user?.id,  // Include user ID
+      blood_group: gContext.user?.blood_group
+    };
+    
+    console.log('Sending donation data:', donationData);
+    
+    api.createDonor(donationData)
+      .then(res => {
+        // Redirect to success page or show success message
+        router.push('/blood-bank?donation=success');
+      })
+      .catch(error => {
+        console.error('Donation error:', error);
+        
+        // Handle different types of errors
+        if (error.response) {
+          // Handle HTTP errors
+          if (error.response.status === 401) {
+            setError('Your session has expired. Please sign in again.');
+            // Clear invalid token
+            Cookies.remove('accessToken');
+            gContext.setIsLoggedIn(false);
+            router.push(`/sign-in?next=${encodeURIComponent(router.asPath)}`);
+          } else if (error.response.data) {
+            // Handle validation errors
+            const errorData = error.response.data;
+            if (typeof errorData === 'object') {
+              // Handle field-specific errors
+              const errorMessages = Object.entries(errorData).map(
+                ([field, errors]) => `${field}: ${Array.isArray(errors) ? errors.join(' ') : errors}`
+              );
+              setError(errorMessages.join('\n'));
+            } else if (Array.isArray(errorData)) {
+              setError(errorData.join('\n'));
+            } else {
+              setError(errorData.toString());
+            }
+          } else {
+            setError('An unexpected error occurred. Please try again.');
+          }
+        } else if (error.request) {
+          // The request was made but no response was received
+          setError('Unable to connect to the server. Please check your internet connection.');
+        } else {
+          // Something happened in setting up the request
+          setError(error.message || 'An error occurred while processing your request');
+        }
+        
+        setSubmitting(false);
+      });
+  };
+
+  // All effects have been moved to the top level
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -103,6 +234,13 @@ const DonateBlood = () => {
                     </div>
                   </div>
                 )}
+                
+                <div className="alert alert-primary d-flex align-items-center mb-4" role="alert">
+                  <FaInfoCircle className="me-2" size={18} />
+                  <div>
+                    <strong>Note:</strong> Your donation request will require administrator approval before it appears in the blood bank. This ensures that only verified physical donations are recorded in our system.
+                  </div>
+                </div>
                 
                 <form onSubmit={donateBlood}>
                   <div className="mb-4">

@@ -30,33 +30,51 @@ class DonorSerializer(serializers.ModelSerializer):
         read_only_fields = (
             'owner',
             'bag_quantity',
+            'status',
+            'approval_notes'
         )
-    
+
+    def validate(self, data):
+        # Validate hospital exists
+        hospital = data.get('hospital')
+        if not hospital:
+            raise serializers.ValidationError("Hospital is required")
+        
+        # Validate user is logged in
+        request = self.context.get('request')
+        if not request.user.is_authenticated:
+            raise serializers.ValidationError("Authentication required")
+            
+        # Validate user is a donor
+        if not request.user.is_donor:
+            raise serializers.ValidationError("User must be registered as a donor first")
+            
+        return data
+
     def create(self, validated_data):
         user = self.context['request'].user
-        donor, donor_created = Donor.objects.update_or_create(
-            owner=user,
-            hospital = validated_data.get('hospital')
-        )
-        if not donor_created:
-            donor.bag_quantity += 1
-            donor.save()
         
-        # create blood bank
-        blood_bank, blood_bank_created = BloodBank.objects.update_or_create(
+        # Create donor record with pending status
+        donor = Donor.objects.create(
+            owner=user,
             hospital=validated_data.get('hospital'),
-            blood_group=user.blood_group
+            status='pending'
         )
+        
+        # Check if blood bank exists for this hospital and blood group
+        blood_bank, blood_bank_created = BloodBank.objects.get_or_create(
+            hospital=validated_data.get('hospital'),
+            blood_group=user.blood_group,
+            defaults={
+                'bag_quantity': 0,  # Start with 0 quantity for new blood banks
+                'is_available': True
+            }
+        )
+        
+        # Add donor to blood bank's donors but don't increment quantity
+        # Quantity will be incremented when admin approves the donation
         blood_bank.donor.add(donor.pk)
-        if not blood_bank_created:
-            blood_bank.bag_quantity += 1
-        blood_bank.save()
-
-        # make user as donor
-        usr = get_object_or_404(User, username=user)
-        usr.is_donor = True
-        usr.save()
-
+        
         return donor
 
 

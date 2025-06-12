@@ -1,33 +1,67 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { PageWrapper } from '@/components/Wrapper';
 import useApiHelper from '@/api';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { FaSearch, FaSort, FaHospital, FaTint, FaBoxes, FaDonate } from 'react-icons/fa';
+import { FaSearch, FaSort, FaHospital, FaTint, FaBoxes, FaDonate, FaExclamationTriangle } from 'react-icons/fa';
+import Cookies from 'js-cookie';
+import GlobalContext from '@/context/GlobalContext';
 
 const BloodBank = () => {
+  const { isLoggedIn } = useContext(GlobalContext);
   const [bloodBank, setBloodBank] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const api = useApiHelper();
   const router = useRouter();
+  
+  // Check for success message in URL
+  useEffect(() => {
+    if (router.query.donation === 'success') {
+      setShowSuccess(true);
+      // Remove the query parameter from URL without reloading the page
+      const url = new URL(window.location);
+      url.searchParams.delete('donation');
+      window.history.replaceState({}, '', url);
+      
+      // Hide success message after 5 seconds
+      const timer = setTimeout(() => {
+        setShowSuccess(false);
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [router.query]);
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
-    
-    api.getBloodBank(router.query)
-      .then(res => {
+    const fetchData = async () => {
+      if (!isLoggedIn) {
+        router.push('/sign-in');
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const res = await api.getBloodBank(router.query);
         setBloodBank(res.data);
         setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching blood bank data:', error);
-        setError('Failed to load blood bank data. Please try again.');
-        setLoading(false);
-      });
+      } catch (error) {
+        if (error?.response?.status === 401) {
+          router.push('/sign-in');
+        } else {
+          console.error('Error fetching blood bank data:', error);
+          setError('Failed to load blood bank data. Please try again.');
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
   }, [router.query]);
 
   const handleFilter = e => {
@@ -76,16 +110,59 @@ const BloodBank = () => {
 
   return (
     <PageWrapper page="Blood Bank">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h4 className="fw-bold"><FaTint className="me-2" />Blood Bank</h4>
-        <Link href="/donate-blood">
-          <button className='btn btn-primary'>
-            <FaDonate className="me-2" />Donate Blood
-          </button>
-        </Link>
-      </div>
-      
-      <div className="card mb-4">
+      <div className="container py-4">
+        {/* Error Message */}
+        {error && (
+          <div className="alert alert-danger d-flex align-items-center mb-4" role="alert">
+            <FaExclamationTriangle className="me-2" />
+            <div>{error}</div>
+          </div>
+        )}
+        
+        {/* Success Message */}
+        {showSuccess && (
+          <div className="row mb-4">
+            <div className="col-12">
+              <div className="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success!</strong> Your blood donation request has been received and is pending admin approval. It will appear in the blood bank only after an administrator approves it.
+                <button 
+                  type="button" 
+                  className="btn-close" 
+                  onClick={() => setShowSuccess(false)}
+                  aria-label="Close"
+                ></button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Error Message */}
+        {error && (
+          <div className="row mb-4">
+            <div className="col-12">
+              <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                {error}
+                <button 
+                  type="button" 
+                  className="btn-close" 
+                  onClick={() => setError(null)}
+                  aria-label="Close"
+                ></button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h4 className="fw-bold"><FaTint className="me-2" />Blood Bank</h4>
+          <Link href="/donate-blood">
+            <button className='btn btn-primary'>
+              <FaDonate className="me-2" />Donate Blood
+            </button>
+          </Link>
+        </div>
+        
+        <div className="card mb-4">
         <div className="card-body">
           <div className='row g-3 align-items-end'>
             <div className="col-md-6">
@@ -193,8 +270,9 @@ const BloodBank = () => {
           ))}
         </div>
       )}
+      </div>
     </PageWrapper>
   );
 };
 
-export default BloodBank
+export default BloodBank;
