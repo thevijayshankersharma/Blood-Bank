@@ -1,1 +1,1 @@
-web: gunicorn bloodbank.wsgi --log-file -
+web: gunicorn bloodbank.wsgi
