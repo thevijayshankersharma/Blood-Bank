@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import2 Donor, BloodBank
+from .models import Donor, BloodBank
 
 @receiver(post_save, sender=Donor)
 def update_blood_bank_stock(sender, instance, created, **kwargs):
