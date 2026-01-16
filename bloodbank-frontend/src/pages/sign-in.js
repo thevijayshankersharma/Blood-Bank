@@ -123,6 +123,31 @@ const SignIn = () => {
                       </>
                     )}
                   </button>
+                  <button
+                    className='btn btn-outline-secondary btn-lg'
+                    type="button"
+                    onClick={() => {
+                        setFormData({email: 'guest@example.com', password: 'guestpassword'});
+                        // Optionally trigger sign in directly or just fill
+                        const form = { email: 'guest@example.com', password: 'guestpassword'};
+                        setLoading(true);
+                        api.signIn(form).then(res => {
+                            setErrors({});
+                            Cookies.set('accessToken', res.data.access);
+                            gContext.setIsLoggedIn(true);
+                            const nextUrl = router.query.next || '/';
+                            router.push(nextUrl);
+                        }).catch(error => {
+                            setErrors(error?.response?.data || { non_field_errors: 'Login failed (Demo credentials might be invalid or backend not running)' });
+                            setLoading(false);
+                            // Set form data so user can see it failed
+                            setFormData(form);
+                        });
+                    }}
+                    disabled={loading}
+                  >
+                     Login as Guest (Recruiter Demo)
+                  </button>
                 </div>
                 
                 <div className="text-center">
